@@ -22,9 +22,14 @@ from students import views
 from rest_framework.routers import DefaultRouter
 
 from students.api import StudentsViewset
+from bakugan_tournaments.api import TournamentViewset, GameViewset, ParticipantsViewset, ApplicationViewset
 
 router = DefaultRouter()
 router.register("students", StudentsViewset, basename="students")
+router.register("tournaments", TournamentViewset, basename="tournaments")
+router.register("games", GameViewset, basename="games")
+router.register("participants", ParticipantsViewset, basename="participants_in_game")
+router.register("applications", ApplicationViewset, basename="applications")
 
 urlpatterns = [
     path('', views.ShowStudentsView.as_view()),
