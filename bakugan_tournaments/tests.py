@@ -1,4 +1,6 @@
 from datetime import date
+from rest_framework.test import APIClient
+
 
 from django.test import TestCase
 from django.contrib.auth.models import User
@@ -9,6 +11,8 @@ class Test(TestCase):
     def test_list(self):
         self.assertEqual(1, 1)
 class TournamentsViewsetTest(TestCase):
+    def setUp(self):
+        self.client=APIClient()
     def test_get_list(self):
         tournament = Tournament.objects.create(
             name = "Февральский 2024",
@@ -59,9 +63,71 @@ class TournamentsViewsetTest(TestCase):
         assert new_tournament.g_power_limit == 670
         assert new_tournament.rules == 'Японские без доклада'
         assert new_tournament.prize == '700 rub'
+    def test_delete_tournament(self):
+            tournaments = baker.make("bakugan_tournaments.Tournament", 10)
+            r = self.client.get('/api/tournaments/')
+            data = r.json()
+            assert len(data) == 10
+        
+            tournament_id_to_delete = tournaments[3].id
+            self.client.delete(f'/api/tournaments/{tournament_id_to_delete}/')
+        
+            r = self.client.get('/api/tournaments/')
+            data = r.json()
+            assert len(data) == 9
+        
+            assert tournament_id_to_delete not in [i['id'] for i in data]
+    def test_update_tournament(self):
+        tournaments=baker.make("bakugan_tournaments.Tournament", 10)
+        tournament: Tournament = tournaments[2]
 
+        r=self.client.get(f'/api/tournaments/{tournament.id}/')
+        data = r.json()
+        assert data['name'] == tournament.name
+        assert data['start_date'] == str(tournament.start_date)
+        assert data['end_date'] == str(tournament.end_date)
+        assert data['stages_count'] == tournament.stages_count
+        assert data['g_power_limit'] == tournament.g_power_limit
+        assert data['rules'] == tournament.rules
+        assert data['prize'] == tournament.prize
+
+        r = self.client.put(f'/api/tournaments/{tournament.id}/', {
+            "name": "Японский",
+            "start_date": '2024-02-01',
+            "end_date": '2024-02-20',
+            "stages_count": 4,
+            "g_power_limit": 670,
+            "rules": "Японские без доклада",
+            "prize": "700 rub"
+        }, format="json")
+        assert r.status_code == 200
+
+        r=self.client.get(f'/api/tournaments/{tournament.id}/')
+        data = r.json()
+        assert data['name']=="Японский"
+        assert data['start_date'] == "2024-02-01"
+        assert data['end_date'] ==  "2024-02-20"
+        assert data['stages_count'] == 4
+        assert data['g_power_limit'] == 670
+        assert data['rules'] == "Японские без доклада"
+        assert data['prize'] == "700 rub"
+
+
+        tournament.refresh_from_db()
+        assert data['name'] == tournament.name
+        assert data['start_date'] == str(tournament.start_date)
+        assert data['end_date'] == str(tournament.end_date)
+        assert data['stages_count'] == tournament.stages_count
+        assert data['g_power_limit'] == tournament.g_power_limit
+        assert data['rules'] == tournament.rules
+        assert data['prize'] == tournament.prize
+    
+
+        
     
 class GameViewsetTest(TestCase):
+    def setUp(self):
+            self.client=APIClient()
     def test_get_list(self):
         
         tournament = Tournament.objects.create(
@@ -136,8 +202,46 @@ class GameViewsetTest(TestCase):
         assert len(data) == 9
     
         assert game_id_to_delete not in [i['id'] for i in data]
-
+    def test_update_game(self):
+            games=baker.make("bakugan_tournaments.Game", 10)
+            game: Game = games[2]
+    
+            r=self.client.get(f'/api/games/{game.id}/')
+            data = r.json()
+            assert data['place'] == game.place
+            assert data['start_date'] ==str(game.start_date)
+            assert data['end_date'] == str(game.end_date)
+            assert data['stage'] == game.stage
+            assert data['status'] == game.status
+    
+            r = self.client.put(f'/api/games/{game.id}/', {
+                 "place":"ТЦ Курумель",
+                 "start_date": '2026-09-23',
+                 "end_date": '2026-09-23',
+                 "stage": 1,
+                 "status": "Завершена"
+            }, format="json")
+            assert r.status_code == 200
+    
+            r=self.client.get(f'/api/games/{game.id}/')
+            data = r.json()
+            assert data['place'] == "ТЦ Курумель"
+            assert data['start_date'] =='2026-09-23'
+            assert data['end_date'] == '2026-09-23'
+            assert data['stage'] == 1
+            assert data['status'] == "Завершена"
+    
+    
+            game.refresh_from_db()
+            assert data['place'] == game.place
+            assert data['start_date'] ==str(game.start_date)
+            assert data['end_date'] == str(game.end_date)
+            assert data['stage'] == game.stage
+            assert data['status'] == game.status
+         
 class ParticipantsViewsetTest(TestCase): 
+    def setUp(self):
+            self.client=APIClient()
     def test_get_list(self):
         
         user = User.objects.create_user(
@@ -222,9 +326,33 @@ class ParticipantsViewsetTest(TestCase):
         assert len(data) == 9
 
         assert participant_id_to_delete not in [i['id'] for i in data]
-
-
+    def test_update_participant(self):
+        participants=baker.make("bakugan_tournaments.Participants_in_game", 10)
+        participant: Participants_in_game = participants[2]
+    
+        r=self.client.get(f'/api/participants/{participant.id}/')
+        data = r.json()
+        assert data['team_name'] == participant.team_name
+        assert data['win_or_lose'] ==participant.win_or_lose
+    
+        r = self.client.put(f'/api/participants/{participant.id}/', {
+             "team_name": "Барбарики",
+             "win_or_lose": True
+        }, format="json")
+        assert r.status_code == 200
+    
+        r=self.client.get(f'/api/participants/{participant.id}/')
+        data = r.json()
+        assert data['team_name'] == "Барбарики"
+        assert data['win_or_lose'] ==True
+    
+    
+        participant.refresh_from_db()
+        assert data['team_name'] == participant.team_name
+        assert data['win_or_lose'] ==participant.win_or_lose
 class ApplicationViewsetTest(TestCase):
+    def setUp(self):
+            self.client=APIClient()
     def test_get_list(self):
         
         user = User.objects.create_user(
@@ -300,4 +428,27 @@ class ApplicationViewsetTest(TestCase):
         assert len(data) == 9
 
         assert application_id_to_delete not in [i['id'] for i in data]
-
+    def test_update_application(self):
+        applications=baker.make("bakugan_tournaments.Application", 10)
+        application: Application = applications[2]
+        
+        r=self.client.get(f'/api/applications/{application.id}/')
+        data = r.json()
+        assert data['name'] == application.name
+        assert data['approval'] ==application.approval
+        
+        r = self.client.put(f'/api/applications/{application.id}/', {
+             "name": "Барбарик",
+             "approval": True
+        }, format="json")
+        assert r.status_code == 200
+        
+        r=self.client.get(f'/api/applications/{application.id}/')
+        data = r.json()
+        assert data['name'] == "Барбарик"
+        assert data['approval'] ==True
+        
+        
+        application.refresh_from_db()
+        assert data['name'] == application.name
+        assert data['approval'] ==application.approval
