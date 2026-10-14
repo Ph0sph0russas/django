@@ -1,5 +1,5 @@
 from django.contrib import admin
-from bakugan_tournaments.models import Tournament, Game, Participants_in_game, Application
+from bakugan_tournaments.models import Profile, Tournament, Game, Participants_in_game, Application
 # Register your models here.
 @admin.register(Tournament)
 class TournamentsAdmin(admin.ModelAdmin):
@@ -12,4 +12,7 @@ class ParticipantsAdmin(admin.ModelAdmin):
     pass
 @admin.register(Application)
 class ApplicationsAdmin(admin.ModelAdmin):
+    pass
+@admin.register(Profile)
+class ProfileAdmin(admin.ModelAdmin):
     pass

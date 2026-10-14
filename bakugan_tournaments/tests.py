@@ -99,7 +99,7 @@ class TournamentsViewsetTest(TestCase):
             "g_power_limit": 670,
             "rules": "Японские без доклада",
             "prize": "700 rub"
-        }, format="json")
+        })
         assert r.status_code == 200
 
         r=self.client.get(f'/api/tournaments/{tournament.id}/')
@@ -220,7 +220,7 @@ class GameViewsetTest(TestCase):
                  "end_date": '2026-09-23',
                  "stage": 1,
                  "status": "Завершена"
-            }, format="json")
+            })
             assert r.status_code == 200
     
             r=self.client.get(f'/api/games/{game.id}/')
@@ -338,7 +338,7 @@ class ParticipantsViewsetTest(TestCase):
         r = self.client.put(f'/api/participants/{participant.id}/', {
              "team_name": "Барбарики",
              "win_or_lose": True
-        }, format="json")
+        })
         assert r.status_code == 200
     
         r=self.client.get(f'/api/participants/{participant.id}/')
@@ -440,7 +440,7 @@ class ApplicationViewsetTest(TestCase):
         r = self.client.put(f'/api/applications/{application.id}/', {
              "name": "Барбарик",
              "approval": True
-        }, format="json")
+        })
         assert r.status_code == 200
         
         r=self.client.get(f'/api/applications/{application.id}/')
