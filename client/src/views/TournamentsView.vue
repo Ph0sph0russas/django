@@ -1,26 +1,20 @@
 <script setup>
-import { computed, ref, onBeforeMount } from 'vue';
+import { ref, onBeforeMount } from 'vue';
 import axios from 'axios';
 //import _ from 'lodash'
 
 
-// 1. Указываем axios, как называется кука с токеном
-axios.defaults.xsrfCookieName = 'csrftoken';
-// 2. Указываем, в какой заголовок её подставлять
-axios.defaults.xsrfHeaderName = 'X-CSRFToken';
-// 3. Разрешаем передачу кук (на всякий случай, если фронт и бэк на разных портах)
-axios.defaults.withCredentials = true;
-
 const tournaments = ref([])
 // const groupsById=computed ((=> {return _keyBy(groups.value, x => x.id)}))
 //groupsById[item.group]?# ? - не выводит, если нет #.name
-const tournamentToAdd = ref([])
-const tournamentToEdit = ref([])
+const tournamentToAdd = ref({})
+const tournamentToEdit = ref({})
+
+
 
 
 async function fetchTournaments() {
     const r = await axios.get("/api/tournaments/");
-    console.log(r.data)
     tournaments.value = r.data
 }
 
@@ -53,51 +47,48 @@ onBeforeMount(async () => {
 
 <template>
 
-
-
-
     <div class="p-2">
         <form @submit.prevent.stop="onTournamentAdd">
             <div class="row">
                 <div class="col-auto">
                     <div class="form-floating">
-                        <input type="text" class="form-control" v-model="tournamentToAdd.name">
+                        <input type="text" class="form-control" v-model="tournamentToAdd.name" required>
                         <label for="floatingInput">Название</label>
                     </div>
                 </div>
                 <div class="col-auto">
                     <div class="form-floating">
-                        <input type="date" class="form-control" v-model="tournamentToAdd.start_date">
+                        <input type="date" class="form-control" v-model="tournamentToAdd.start_date" required>
                         <label for="floatingInput">Дата начала</label>
                     </div>
                 </div>
                 <div class="col-auto">
                     <div class="form-floating">
-                        <input type="date" class="form-control" v-model="tournamentToAdd.end_date">
+                        <input type="date" class="form-control" v-model="tournamentToAdd.end_date" required>
                         <label for="floatingInput">Дата окончания</label>
                     </div>
                 </div>
                 <div class="col-auto">
                     <div class="form-floating">
-                        <input type="number" min="1" class="form-control" v-model="tournamentToAdd.stages_count">
+                        <input type="number" min="1" class="form-control" v-model="tournamentToAdd.stages_count" required>
                         <label for="floatingInput">Количество стадий</label>
                     </div>
                 </div>
                 <div class="col-auto">
                     <div class="form-floating">
-                        <input type="text" class="form-control" v-model="tournamentToAdd.prize">
+                        <input type="text" class="form-control" v-model="tournamentToAdd.prize" required>
                         <label for="floatingInput">Приз</label>
                     </div>
                 </div>
                 <div class="col-auto">
                     <div class="form-floating">
-                        <input type="number" min="250" class="form-control" v-model="tournamentToAdd.g_power_limit">
+                        <input type="number" min="250" class="form-control" v-model="tournamentToAdd.g_power_limit" required>
                         <label for="floatingInput">Ограничение силы</label>
                     </div>
                 </div>
                 <div class="col-auto">
                     <div class="form-floating">
-                        <input type="text" class="form-control" v-model="tournamentToAdd.rules">
+                        <input type="text" class="form-control" v-model="tournamentToAdd.rules" required>
                         <label for="floatingInput">Правила</label>
                     </div>
                 </div>
@@ -134,45 +125,45 @@ onBeforeMount(async () => {
                     <div class="row">
                         <div class="col-auto">
                             <div class="form-floating">
-                                <input type="text" class="form-control" v-model="tournamentToEdit.name">
+                                <input type="text" class="form-control" v-model="tournamentToEdit.name" required>
                                 <label for="floatingInput">Название</label>
                             </div>
                         </div>
                         <div class="col-auto">
                             <div class="form-floating">
-                                <input type="date" class="form-control" v-model="tournamentToEdit.start_date">
+                                <input type="date" class="form-control" v-model="tournamentToEdit.start_date" required>
                                 <label for="floatingInput">Дата начала</label>
                             </div>
                         </div>
                         <div class="col-auto">
                             <div class="form-floating">
-                                <input type="date" class="form-control" v-model="tournamentToEdit.end_date">
+                                <input type="date" class="form-control" v-model="tournamentToEdit.end_date" required>
                                 <label for="floatingInput">Дата окончания</label>
                             </div>
                         </div>
                         <div class="col-auto">
                             <div class="form-floating">
                                 <input type="number" min="1" class="form-control"
-                                    v-model="tournamentToEdit.stages_count">
+                                    v-model="tournamentToEdit.stages_count" required>
                                 <label for="floatingInput">Количество стадий</label>
                             </div>
                         </div>
                         <div class="col-auto">
                             <div class="form-floating">
-                                <input type="text" class="form-control" v-model="tournamentToEdit.prize">
+                                <input type="text" class="form-control" v-model="tournamentToEdit.prize" required>
                                 <label for="floatingInput">Приз</label>
                             </div>
                         </div>
                         <div class="col-auto">
                             <div class="form-floating">
                                 <input type="number" min="250" class="form-control"
-                                    v-model="tournamentToEdit.g_power_limit">
+                                    v-model="tournamentToEdit.g_power_limit" required>
                                 <label for="floatingInput">Ограничение силы</label>
                             </div>
                         </div>
                         <div class="col-auto">
                             <div class="form-floating">
-                                <input type="text" class="form-control" v-model="tournamentToEdit.rules">
+                                <input type="text" class="form-control" v-model="tournamentToEdit.rules" required>
                                 <label for="floatingInput">Правила</label>
                             </div>
                         </div>

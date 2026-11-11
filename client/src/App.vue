@@ -1,4 +1,11 @@
 <script setup>
+import { onBeforeMount } from 'vue';
+import axios from 'axios';
+import Cookies from 'js-cookie';
+
+onBeforeMount(() => {
+  axios.defaults.headers.common['X-CSRFToken'] = Cookies.get("csrftoken");
+})
 
 </script>
 
@@ -14,7 +21,9 @@
         <li class="nav-item">
           <router-link class="nav-link" to ="/">Турниры</router-link>
         </li>
-        
+        <li class="nav-item">
+          <router-link class="nav-link" to="/games">Игры</router-link>
+        </li>
       </ul>
     </div>
   </nav>
