@@ -24,6 +24,7 @@ async function fetchGames() {
 async function fetchProfiles()
 {
     const r = await axios.get("/api/profile/")
+    console.log(r.data)
     profiles.value=r.data
 }
 
@@ -80,7 +81,7 @@ onBeforeMount(async () => {
                 <div class="col-auto">
                     <div class="form-floating">
                         <select name="" id="" class="form-select" v-model="participantToAdd.user" required>
-                            <option :value="t.id" v-for="t in profiles">{{ t.user?.username }}</option>
+                            <option :value="t.id" v-for="t in profiles">{{ t.username }}</option>
                         </select>
                         <label for="floatingInput">Пользователь</label>
                     </div>

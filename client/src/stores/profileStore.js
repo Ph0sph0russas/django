@@ -8,7 +8,8 @@ const useProfileStore=defineStore('profileStore', () =>{
     
     const isAuth = ref(false)
     const userName = ref(null)
-
+    
+    
     async function fetchMe()
     {
         const r = await axios.get("/api/profile/me/")
