@@ -133,7 +133,7 @@ onBeforeMount(async () => {
                     <div class="row">
                         <div class="col-auto">
                             <div class="form-floating">
-                                <select name="" id="" class="form-select" v-model="gameToAdd.tournament" required>
+                                <select name="" id="" class="form-select" v-model="gameToEdit.tournament" required>
                                     <option :value="t.id" v-for="t in tournaments">{{ t.name }}</option>
                                 </select>
                                 <label for="floatingInput">Турнир</label>

@@ -1,7 +1,11 @@
 from rest_framework import serializers
 
-from bakugan_tournaments.models import Tournament, Game, Participants_in_game, Application
+from bakugan_tournaments.models import Tournament, Game, Participants_in_game, Application, Profile
 
+class ProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Profile
+        fields="__all__"
 class TournamentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tournament

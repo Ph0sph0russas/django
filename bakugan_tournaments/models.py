@@ -9,8 +9,8 @@ class Profile(models.Model):
         undefined = 0
         organizer = 1
         participant = 2
-    user = models.ForeignKey("auth.User", on_delete=models.CASCADE, null=True, blank=True)
-    role = models.IntegerField("Роль", choices=Role)
+    user = models.OneToOneField("auth.User", on_delete=models.CASCADE, null=True, blank=True)
+    role = models.IntegerField("Роль", choices=Role, default=Role.undefined)
 
     def __str__(self):
         return self.user.username if self.user else f"Profile {self.id}"
@@ -49,6 +49,7 @@ class Game(models.Model):
 class Participants_in_game(models.Model):
     game=models.ForeignKey("game", on_delete=models.CASCADE, null=True)
     user=models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True)
+
     team_name=models.TextField("Название команды")
     win_or_lose=models.BooleanField("Победа/поражение")
     

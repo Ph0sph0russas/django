@@ -15,14 +15,17 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+from django.conf.urls.static import static
 from django.urls import path, include
+from django.conf import settings
+
 
 from students import views
 
 from rest_framework.routers import DefaultRouter
 
 from students.api import StudentsViewset
-from bakugan_tournaments.api import TournamentViewset, GameViewset, ParticipantsViewset, ApplicationViewset
+from bakugan_tournaments.api import TournamentViewset, GameViewset, ParticipantsViewset, ApplicationViewset, ProfileViewset
 
 router = DefaultRouter()
 router.register("students", StudentsViewset, basename="students")
@@ -30,9 +33,11 @@ router.register("tournaments", TournamentViewset, basename="tournaments")
 router.register("games", GameViewset, basename="games")
 router.register("participants", ParticipantsViewset, basename="participants_in_game")
 router.register("applications", ApplicationViewset, basename="applications")
+router.register("profile", ProfileViewset, basename="profile")
 
 urlpatterns = [
     path('', views.ShowStudentsView.as_view()),
     path('admin/', admin.site.urls),
     path('api/', include(router.urls)),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) \
+  + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
