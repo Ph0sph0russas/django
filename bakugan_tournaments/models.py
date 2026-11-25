@@ -29,7 +29,8 @@ class Tournament(models.Model):
     prize = models.TextField("Приз")
     g_power_limit = models.IntegerField("Ограничение силы")
     rules=models.TextField("Правила")
-
+    preview = models.ImageField("Превью", null=True, upload_to="tournaments")
+    
     def __str__(self) -> str:
         return self.name
 
@@ -46,22 +47,22 @@ class Game(models.Model):
         return str(self.tournament) + " Стадия " + str(self.stage)
 
 
-class Participants_in_game(models.Model):
-    game=models.ForeignKey("game", on_delete=models.CASCADE, null=True)
-    user=models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True)
-
-    team_name=models.TextField("Название команды")
-    win_or_lose=models.BooleanField("Победа/поражение")
-    
-    def __str__(self) -> str:
-        return str(self.user) + " " + str(self.game) + " " + self.team_name
-
-
 class Application(models.Model):
     name=models.TextField("Имя")
     tournament = models.ForeignKey("tournament", on_delete=models.CASCADE, null=True)
     approval = models.BooleanField("Одобрение")
+    team_name=models.TextField("Название команды", null=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True)
+    picture = models.ImageField("Изображение", null=True, upload_to="applications")
 
     def __str__(self) -> str:
         return self.name + " " + str(self.tournament)
+
+class Participants_in_game(models.Model):
+    application = models.ForeignKey("application", on_delete=models.CASCADE, null=True)
+    game=models.ForeignKey("game", on_delete=models.CASCADE, null=True)
+    win_or_lose=models.BooleanField("Победа/поражение")
+    
+    def __str__(self) -> str:
+        return str(self.user) + " " + str(self.game)
+
